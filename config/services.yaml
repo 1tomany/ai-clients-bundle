@@ -1,4 +1,67 @@
+parameters:
+    env(GEMINI_API_KEY): null
+    env(OPENAI_API_KEY): null
+
 services:
     _defaults:
         autowire: true
         autoconfigure: true
+
+    OneToMany\AiBundle\:
+        resource: '../src/'
+
+    # OneToMany / AI / Files
+    OneToMany\AI\Action\File\CacheFileAction:
+        arguments:
+            $fileClientFactory: '@OneToMany\AI\Factory\FileClientFactory'
+
+    OneToMany\AI\Contract\Action\File\CacheFileActionInterface: '@OneToMany\AI\Action\File\CacheFileAction'
+
+    OneToMany\AI\Factory\FileClientFactory:
+        arguments:
+            $clients: !tagged_locator { tag: 1tomany.ai.clients.file_client, index_by: key }
+
+    OneToMany\AI\Client\Gemini\FileClient:
+        arguments:
+            $geminiApiKey: '%env(GEMINI_API_KEY)%'
+        tags:
+            - { name: 1tomany.ai.clients.file_client, key: gemini }
+
+    OneToMany\AI\Client\Mock\FileClient:
+        tags:
+            - { name: 1tomany.ai.clients.file_client, key: mock }
+
+    OneToMany\AI\Client\OpenAi\FileClient:
+        arguments:
+            $geminiApiKey: '%env(GEMINI_API_KEY)%'
+        tags:
+            - { name: 1tomany.ai.clients.file_client, key: openai }
+
+    # OneToMany / AI / Prompts
+    OneToMany\AI\Action\Prompt\CompilePromptAction:
+        # arguments:
+        #     $normalizer: '@serializer'
+
+    OneToMany\AI\Action\Prompt\SendPromptAction:
+        arguments:
+            $promptClientFactory: '@OneToMany\AI\Factory\PromptClientFactory'
+
+    OneToMany\AI\Contract\Action\Prompt\CompilePromptActionInterface: '@OneToMany\AI\Action\Prompt\CompilePromptAction'
+    OneToMany\AI\Contract\Action\Prompt\SendPromptActionInterface: '@OneToMany\AI\Action\Prompt\SendPromptAction'
+
+    OneToMany\AI\Factory\PromptClientFactory:
+         arguments:
+            $clients: !tagged_locator { tag: 1tomany.ai.clients.prompt_client, index_by: key }
+
+    OneToMany\AI\Client\Gemini\PromptClient:
+        arguments:
+            $httpClient: '@gemini.client'
+        tags:
+            - { name: 1tomany.ai.clients.prompt_client, key: gemini }
+
+    OneToMany\AI\Client\Gemini\PromptNormalizer:
+        tags: [serializer.normalizer]
+
+    OneToMany\AI\Client\Mock\PromptClient:
+        tags:
+            - { name: 1tomany.ai.clients.prompt_client, key: mock }
