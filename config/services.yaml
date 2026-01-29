@@ -7,16 +7,15 @@ services:
         autowire: true
         autoconfigure: true
 
-    OneToMany\AiBundle\:
-        resource: '../src/'
-
-    # OneToMany / AI / Files
+    # OneToMany / AI / Files / Actions
     OneToMany\AI\Action\File\CacheFileAction:
         arguments:
             $fileClientFactory: '@OneToMany\AI\Factory\FileClientFactory'
 
-    OneToMany\AI\Contract\Action\File\CacheFileActionInterface: '@OneToMany\AI\Action\File\CacheFileAction'
+    OneToMany\AI\Contract\Action\File\CacheFileActionInterface:
+        alias: '@OneToMany\AI\Action\File\CacheFileAction'
 
+    # OneToMany / AI / Files / Clients
     OneToMany\AI\Factory\FileClientFactory:
         arguments:
             $clients: !tagged_locator { tag: 1tomany.ai.clients.file_client, index_by: key }
@@ -33,35 +32,45 @@ services:
 
     OneToMany\AI\Client\OpenAi\FileClient:
         arguments:
-            $geminiApiKey: '%env(GEMINI_API_KEY)%'
+            $geminiApiKey: '%env(OPENAI_API_KEY)%'
         tags:
             - { name: 1tomany.ai.clients.file_client, key: openai }
 
-    # OneToMany / AI / Prompts
+    # OneToMany / AI / Prompts / Actions
     OneToMany\AI\Action\Prompt\CompilePromptAction:
-        # arguments:
-        #     $normalizer: '@serializer'
+        arguments:
+            $promptClientFactory: '@OneToMany\AI\Factory\PromptClientFactory'
 
     OneToMany\AI\Action\Prompt\SendPromptAction:
         arguments:
             $promptClientFactory: '@OneToMany\AI\Factory\PromptClientFactory'
 
-    OneToMany\AI\Contract\Action\Prompt\CompilePromptActionInterface: '@OneToMany\AI\Action\Prompt\CompilePromptAction'
-    OneToMany\AI\Contract\Action\Prompt\SendPromptActionInterface: '@OneToMany\AI\Action\Prompt\SendPromptAction'
+    OneToMany\AI\Contract\Action\Prompt\CompilePromptActionInterface:
+        alias: '@OneToMany\AI\Action\Prompt\CompilePromptAction'
 
+    OneToMany\AI\Contract\Action\Prompt\DispatchPromptActionInterface:
+        alias: '@OneToMany\AI\Action\Prompt\DispatchPromptAction'
+
+    # OneToMany / AI / Prompts / Clients
     OneToMany\AI\Factory\PromptClientFactory:
          arguments:
             $clients: !tagged_locator { tag: 1tomany.ai.clients.prompt_client, index_by: key }
 
     OneToMany\AI\Client\Gemini\PromptClient:
         arguments:
-            $httpClient: '@gemini.client'
+            $geminiApiKey: '%env(GEMINI_API_KEY)%'
         tags:
             - { name: 1tomany.ai.clients.prompt_client, key: gemini }
 
-    OneToMany\AI\Client\Gemini\PromptNormalizer:
+    OneToMany\AI\Client\Gemini\Serializer\PromptNormalizer:
         tags: [serializer.normalizer]
 
     OneToMany\AI\Client\Mock\PromptClient:
         tags:
             - { name: 1tomany.ai.clients.prompt_client, key: mock }
+
+    OneToMany\AI\Client\Mock\Serializer\PromptNormalizer:
+        tags: [serializer.normalizer]
+
+    OneToMany\AI\Client\OpenAi\Serializer\PromptNormalizer:
+        tags: [serializer.normalizer]
