@@ -8,6 +8,8 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
+use function vsprintf;
+
 class PhpAiBundle extends AbstractBundle
 {
     /**
@@ -51,7 +53,7 @@ class PhpAiBundle extends AbstractBundle
 
         foreach ($config as $vendor => $vendorConfig) {
             foreach ($this->clients as $clientType) {
-                $id = \vsprintf('php_ai.client.%s.%s', [
+                $id = vsprintf('php_ai.client.%s.%s', [
                     $vendor, $clientType,
                 ]);
 
@@ -59,7 +61,9 @@ class PhpAiBundle extends AbstractBundle
                     continue;
                 }
 
-                if ($vendorConfig['enabled']) {
+                if (!$vendorConfig['enabled']) {
+                    $builder->removeDefinition($id);
+                } else {
                     $definition = $builder->getDefinition($id);
 
                     if ($apiKey = $vendorConfig['api_key'] ?? null) {
@@ -73,8 +77,6 @@ class PhpAiBundle extends AbstractBundle
                     if ($serializer = $vendorConfig['serializer'] ?? null) {
                         $definition->setArgument('$serializer', new Reference($serializer));
                     }
-                } else {
-                    $builder->removeDefinition($id);
                 }
             }
         }
