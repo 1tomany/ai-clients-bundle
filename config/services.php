@@ -21,11 +21,6 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_it
 return static function (ContainerConfigurator $container): void {
     $container
         ->services()
-            // Defaults
-            ->defaults()
-                ->autowire(true)
-                ->autoconfigure(true)
-
             // Client Factories
             ->set('php_ai.factory.client', ClientFactory::class)
                 ->abstract(true)

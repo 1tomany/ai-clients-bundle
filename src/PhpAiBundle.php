@@ -4,7 +4,6 @@ namespace OneToMany\PhpAiBundle;
 
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -24,10 +23,14 @@ class PhpAiBundle extends AbstractBundle
      *   gemini?: array{
      *     api_key: non-empty-string,
      *     enabled: bool,
+     *     http_client: non-empty-string,
+     *     serializer: non-empty-string,
      *   },
      *   openai?: array{
      *     api_key: non-empty-string,
      *     enabled: bool,
+     *     http_client: non-empty-string,
+     *     serializer: non-empty-string,
      *   }
      * } $config
      */
