@@ -48,7 +48,6 @@ class PhpAiBundle extends AbstractBundle
                     if (!$vendorConfig['enabled']) {
                         $builder->removeDefinition($id);
                     } else {
-
                         $builder
                             ->getDefinition($id)
                             ->setArgument('$apiKey', $vendorConfig['api_key'])
