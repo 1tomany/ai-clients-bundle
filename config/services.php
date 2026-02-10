@@ -9,7 +9,7 @@ use OneToMany\AI\Client\Gemini\QueryClient as GeminiQueryClient;
 use OneToMany\AI\Client\Mock\FileClient as MockFileClient;
 use OneToMany\AI\Client\Mock\QueryClient as MockQueryClient;
 use OneToMany\AI\Client\OpenAi\FileClient as OpenAiFileClient;
-use OneToMany\AI\Client\OpenAi\QueryClient as QueryQueryClient;
+use OneToMany\AI\Client\OpenAi\QueryClient as OpenAiQueryClient;
 use OneToMany\AI\Contract\Action\File\DeleteFileActionInterface;
 use OneToMany\AI\Contract\Action\File\UploadFileActionInterface;
 use OneToMany\AI\Contract\Action\Query\CompileQueryActionInterface;
@@ -60,7 +60,7 @@ return static function (ContainerConfigurator $container): void {
                 ->tag('php_ai.client.query')
             ->set('php_ai.client.mock.query', MockQueryClient::class)
                 ->tag('php_ai.client.query')
-            ->set('php_ai.client.openai.query', QueryQueryClient::class)
+            ->set('php_ai.client.openai.query', OpenAiQueryClient::class)
                 ->tag('php_ai.client.query')
     ;
 };
