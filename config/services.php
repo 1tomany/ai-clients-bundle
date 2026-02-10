@@ -1,5 +1,6 @@
 <?php
 
+use OneToMany\AI\Action\File\DeleteFileAction;
 use OneToMany\AI\Action\File\UploadFileAction;
 use OneToMany\AI\Action\Query\CompileQueryAction;
 use OneToMany\AI\Action\Query\ExecuteQueryAction;
@@ -8,7 +9,8 @@ use OneToMany\AI\Client\Gemini\QueryClient as GeminiQueryClient;
 use OneToMany\AI\Client\Mock\FileClient as MockFileClient;
 use OneToMany\AI\Client\Mock\QueryClient as MockQueryClient;
 use OneToMany\AI\Client\OpenAi\FileClient as OpenAiFileClient;
-use OneToMany\AI\Client\OpenAi\QueryClient as QueryQueryClient;
+use OneToMany\AI\Client\OpenAi\QueryClient as OpenAiQueryClient;
+use OneToMany\AI\Contract\Action\File\DeleteFileActionInterface;
 use OneToMany\AI\Contract\Action\File\UploadFileActionInterface;
 use OneToMany\AI\Contract\Action\Query\CompileQueryActionInterface;
 use OneToMany\AI\Contract\Action\Query\ExecuteQueryActionInterface;
@@ -30,7 +32,10 @@ return static function (ContainerConfigurator $container): void {
                 ->arg('$clients', tagged_iterator('php_ai.client.query'))
 
             // File Actions
+            ->alias(DeleteFileActionInterface::class, service('php_ai.action.file.delete'))
             ->alias(UploadFileActionInterface::class, service('php_ai.action.file.upload'))
+            ->set('php_ai.action.file.delete', DeleteFileAction::class)
+                ->arg('$clientFactory', service('php_ai.factory.client.file'))
             ->set('php_ai.action.file.upload', UploadFileAction::class)
                 ->arg('$clientFactory', service('php_ai.factory.client.file'))
 
@@ -55,7 +60,7 @@ return static function (ContainerConfigurator $container): void {
                 ->tag('php_ai.client.query')
             ->set('php_ai.client.mock.query', MockQueryClient::class)
                 ->tag('php_ai.client.query')
-            ->set('php_ai.client.openai.query', QueryQueryClient::class)
+            ->set('php_ai.client.openai.query', OpenAiQueryClient::class)
                 ->tag('php_ai.client.query')
     ;
 };
