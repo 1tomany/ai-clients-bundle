@@ -43,6 +43,64 @@ php_ai:
 
 You'll also have to define the API keys in your `.env` file or by using the [Symfony Secrets](https://symfony.com/doc/current/configuration/secrets.html) component.
 
+## Usage
+
+Any action interface can be injected into a service. Because you can have multiple clients loaded in at once, the model passed into the request dictates what client to use. This makes it very easy to allow your users to select amongst any client supported by the core `1tomany/php-ai` library.
+
+```php
+<?php
+
+namespace App\File\Action\Handler;
+
+use OneToMany\AI\Contract\Action\File\UploadFileActionInterface;
+use OneToMany\AI\Contract\Action\Query\ExecuteQueryActionInterface;
+
+use function mime_content_type;
+
+final readonly class QueryFileHandler
+{
+    public function __construct(
+        private UploadFileActionInterface $uploadFileAction,
+        private ExecuteQueryActionInterface $executeQueryAction,
+    ) {
+    }
+
+    public function __invoke(string $path, string $prompt): void
+    {
+        $model = 'gemini-2.5-flash';
+        
+        /** 
+         * @var non-empty-lowercase-string $format
+         */
+        $format = mime_content_type($path);
+        
+        // Upload the file to cache it with the model
+        $uploadRequest = new UploadRequest($model)
+            ->atPath($path)
+            ->withFormat($format);
+        
+        $response = $this->uploadFileAction->act(...[
+            'request' => $uploadRequest,
+        ]);
+        
+        // $response instanceof \OneToMany\AI\Response\File\UploadResponse
+        $fileUri = $response->getUri();
+        
+        // Compile and execute a query using the file
+        $compileRequest = new CompileRequest($model)
+            ->withText($prompt)
+            ->withFileUri($fileUri, $format);
+            
+        $response = $this->executeQueryAction->act(...[
+            'request' => $compileRequest,
+        ]);
+        
+        // $response instanceof \OneToMany\AI\Response\Query\ExecuteResponse
+        printf("Model output: %s\n", $response->getOutput());
+    }
+}
+```
+
 ## Credits
 
 - [Vic Cherubini](https://github.com/viccherubini), [1:N Labs, LLC](https://1tomany.com)
