@@ -59,9 +59,7 @@ class PhpAiBundle extends AbstractBundle
 
         foreach ($config as $vendor => $vendorConfig) {
             foreach ($this->clients as $clientType) {
-                $id = vsprintf('php_ai.client.%s.%s', [
-                    $vendor, $clientType,
-                ]);
+                $id = "php_ai.client.{$vendor}.{$clientType}";
 
                 if (!$builder->has($id)) {
                     continue;
