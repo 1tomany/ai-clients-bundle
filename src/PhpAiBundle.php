@@ -56,8 +56,8 @@ class PhpAiBundle extends AbstractBundle
         $container->import('../config/services.php');
 
         foreach ($config as $vendor => $vendorConfig) {
-            foreach ($this->clients as $clientType) {
-                $id = "php_ai.client.{$vendor}.{$clientType}";
+            foreach ($this->clients as $idx => $client) {
+                $id = "php_ai.client.{$vendor}.{$client}";
 
                 if (!$builder->has($id)) {
                     continue;
