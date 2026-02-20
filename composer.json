@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "OneToMany\\AI\\ClientsBundle": "src/"
+            "OneToMany\\AI\\ClientsBundle\\": "src/"
         }
     },
     "autoload-dev": {
