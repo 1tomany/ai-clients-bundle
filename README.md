@@ -49,7 +49,7 @@ You'll also have to define the API keys in your `.env` file or by using the [Sym
 
 ## Usage
 
-Any action interface can be injected into a service. Because you can have multiple clients loaded in at once, the model passed into the request dictates what client to use. This makes it very easy to allow your users to select amongst any client supported by the core `1tomany/llm_sdk` library.
+Any action interface can be injected into a service. Because you can have multiple clients loaded in at once, the model passed into the request dictates what client to use. This makes it very easy to allow your users to select amongst any client supported by the core `1tomany/llm-sdk` library.
 
 ```php
 <?php
@@ -87,7 +87,7 @@ final readonly class QueryFileHandler
             'request' => $uploadRequest,
         ]);
         
-        // $response instanceof \OneToMany\LlmSdk\Response\File\UploadResponse
+        // $response instanceof OneToMany\LlmSdk\Response\File\UploadResponse
         $fileUri = $response->getUri();
         
         // Compile and execute a query using the file
@@ -99,7 +99,7 @@ final readonly class QueryFileHandler
             'request' => $compileRequest,
         ]);
         
-        // $response instanceof \OneToMany\LlmSdk\Response\Query\ExecuteResponse
+        // $response instanceof OneToMany\LlmSdk\Response\Query\ExecuteResponse
         printf("Model output: %s\n", $response->getOutput());
     }
 }
