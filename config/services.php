@@ -5,12 +5,15 @@ use OneToMany\LlmSdk\Action\File\UploadFileAction;
 use OneToMany\LlmSdk\Action\Query\CompileQueryAction;
 use OneToMany\LlmSdk\Action\Query\ExecuteQueryAction;
 use OneToMany\LlmSdk\Client\Claude\FileClient as ClaudeFileClient;
+use OneToMany\LlmSdk\Client\Gemini\BatchClient as GeminiBatchClient;
 use OneToMany\LlmSdk\Client\Gemini\FileClient as GeminiFileClient;
 use OneToMany\LlmSdk\Client\Gemini\QueryClient as GeminiQueryClient;
 use OneToMany\LlmSdk\Client\Mock\FileClient as MockFileClient;
 use OneToMany\LlmSdk\Client\Mock\QueryClient as MockQueryClient;
+use OneToMany\LlmSdk\Client\OpenAI\BatchClient as OpenAIBatchClient;
 use OneToMany\LlmSdk\Client\OpenAI\FileClient as OpenAIFileClient;
 use OneToMany\LlmSdk\Client\OpenAI\QueryClient as OpenAIQueryClient;
+use OneToMany\LlmSdk\Contract\Action\Batch\CreateBatchActionInterface;
 use OneToMany\LlmSdk\Contract\Action\File\DeleteFileActionInterface;
 use OneToMany\LlmSdk\Contract\Action\File\UploadFileActionInterface;
 use OneToMany\LlmSdk\Contract\Action\Query\CompileQueryActionInterface;
@@ -27,17 +30,30 @@ return static function (ContainerConfigurator $container): void {
             // Client Factories
             ->set('1tomany.llmsdk.factory.client', ClientFactory::class)
                 ->abstract(true)
+            ->set('1tomany.llmsdk.factory.client.batch', ClientFactory::class)
+            ->arg('$clients', tagged_iterator('1tomany.llmsdk.client.batch'))
             ->set('1tomany.llmsdk.factory.client.file', ClientFactory::class)
                 ->arg('$clients', tagged_iterator('1tomany.llmsdk.client.file'))
             ->set('1tomany.llmsdk.factory.client.query', ClientFactory::class)
                 ->arg('$clients', tagged_iterator('1tomany.llmsdk.client.query'))
 
+            // Batch Actions
+            ->alias(CreateBatchActionInterface::class, service('1tomany.llmsdk.action.batch.create'))
+            ->set('1tomany.llmsdk.action.batch.create', CreateBatchActionInterface::class)
+                ->arg('$clientFactory', service('1tomany.llmsdk.factory.client.batch'))
+
+            // Batch Clients
+            ->set('1tomany.llmsdk.client.gemini.batch', GeminiBatchClient::class)
+                ->tag('1tomany.llmsdk.client.batch')
+            ->set('1tomany.llmsdk.client.openai.file', OpenAIBatchClient::class)
+                ->tag('1tomany.llmsdk.client.batch')
+
             // File Actions
-            ->alias(DeleteFileActionInterface::class, service('1tomany.llmsdk.action.file.delete'))
             ->alias(UploadFileActionInterface::class, service('1tomany.llmsdk.action.file.upload'))
-            ->set('1tomany.llmsdk.action.file.delete', DeleteFileAction::class)
-                ->arg('$clientFactory', service('1tomany.llmsdk.factory.client.file'))
+            ->alias(DeleteFileActionInterface::class, service('1tomany.llmsdk.action.file.delete'))
             ->set('1tomany.llmsdk.action.file.upload', UploadFileAction::class)
+                ->arg('$clientFactory', service('1tomany.llmsdk.factory.client.file'))
+            ->set('1tomany.llmsdk.action.file.delete', DeleteFileAction::class)
                 ->arg('$clientFactory', service('1tomany.llmsdk.factory.client.file'))
 
             // File Clients
