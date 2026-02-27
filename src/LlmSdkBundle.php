@@ -10,13 +10,8 @@ use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 class LlmSdkBundle extends AbstractBundle
 {
-    /**
-     * @var non-empty-list<'file'|'query'>
-     */
-    private array $clients = [
-        'file',
-        'query',
-    ];
+    /** @var non-empty-list<'batch'|'file'|'query'> */
+    private array $clients = ['batch', 'file', 'query'];
 
     /**
      * @param DefinitionConfigurator<'array'> $definition
