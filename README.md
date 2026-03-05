@@ -16,8 +16,8 @@ Below is the complete configuration for this bundle. To customize it for your Sy
 
 ```yaml
 llm_sdk:
-    claude:
-        api_key: "%env(CLAUDE_API_KEY)%"
+    anthropic:
+        api_key: "%env(ANTHROPIC_API_KEY)%"
         http_client: "http_client"
         serializer: "serializer"
     gemini:
@@ -35,9 +35,9 @@ when@dev:
             enabled: true
 ```
 
-By default, the `http_client` and `serializer` properties in the `claude`, `gemini` and `openai` blocks use the `@http_client` and `@serializer` services defined in a standard Symfony application. You're free to use your own scoped HTTP client or serializer services.
+By default, the `http_client` and `serializer` properties in the `anthropic`, `gemini` and `openai` blocks use the `@http_client` and `@serializer` services defined in a standard Symfony application. You're free to use your own scoped HTTP client or serializer services.
 
-If you wish to disable a vendor, simply delete the configuration block from the file. For example, if your application only uses Gemini, you would delete the `claude` and `openai` blocks, leaving you with:
+If you wish to disable a vendor, simply delete the configuration block from the file. For example, if your application only uses Gemini, you would delete the `anthropic` and `openai` blocks, leaving you with:
 
 ```yaml
 llm_sdk:
@@ -79,9 +79,7 @@ final readonly class QueryFileHandler
         $format = mime_content_type($path);
 
         // Upload the file to cache it with the model
-        $uploadRequest = new UploadRequest($model)
-            ->atPath($path)
-            ->withFormat($format);
+        $uploadRequest = new UploadRequest($model)->atPath($path)->withFormat($format);
 
         $response = $this->uploadFileAction->act(...[
             'request' => $uploadRequest,
@@ -90,10 +88,8 @@ final readonly class QueryFileHandler
         // $response instanceof OneToMany\LlmSdk\Response\File\UploadResponse
         $fileUri = $response->getUri();
 
-        // Compile and execute a query using the file
-        $compileRequest = new CompileRequest($model)
-            ->withText($prompt)
-            ->withFileUri($fileUri, $format);
+        // Compile and execute a query using the cached file
+        $compileRequest = new CompileRequest($model)->withPrompt($prompt)->withFileUri($fileUri, $format);
 
         $response = $this->executeQueryAction->act(...[
             'request' => $compileRequest,
