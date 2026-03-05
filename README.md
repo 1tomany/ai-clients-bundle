@@ -17,17 +17,17 @@ Below is the complete configuration for this bundle. To customize it for your Sy
 ```yaml
 llm_sdk:
     claude:
-        api_key: '%env(CLAUDE_API_KEY)%'
-        http_client: 'http_client'
-        serializer: 'serializer'
+        api_key: "%env(CLAUDE_API_KEY)%"
+        http_client: "http_client"
+        serializer: "serializer"
     gemini:
-        api_key: '%env(GEMINI_API_KEY)%'
-        http_client: 'http_client'
-        serializer: 'serializer'
+        api_key: "%env(GEMINI_API_KEY)%"
+        http_client: "http_client"
+        serializer: "serializer"
     openai:
-        api_key: '%env(OPENAI_API_KEY)%'
-        http_client: 'http_client'
-        serializer: 'serializer'
+        api_key: "%env(OPENAI_API_KEY)%"
+        http_client: "http_client"
+        serializer: "serializer"
 
 when@dev:
     llm_sdk:
@@ -42,7 +42,7 @@ If you wish to disable a vendor, simply delete the configuration block from the 
 ```yaml
 llm_sdk:
     gemini:
-        api_key: '%env(GEMINI_API_KEY)%'
+        api_key: "%env(GEMINI_API_KEY)%"
 ```
 
 You'll also have to define the API keys in your `.env` file or by using the [Symfony Secrets](https://symfony.com/doc/current/configuration/secrets.html) component.
@@ -72,33 +72,33 @@ final readonly class QueryFileHandler
     public function __invoke(string $path, string $prompt): void
     {
         $model = 'gemini-2.5-flash';
-        
-        /** 
+
+        /**
          * @var non-empty-lowercase-string $format
          */
         $format = mime_content_type($path);
-        
+
         // Upload the file to cache it with the model
         $uploadRequest = new UploadRequest($model)
             ->atPath($path)
             ->withFormat($format);
-        
+
         $response = $this->uploadFileAction->act(...[
             'request' => $uploadRequest,
         ]);
-        
+
         // $response instanceof OneToMany\LlmSdk\Response\File\UploadResponse
         $fileUri = $response->getUri();
-        
+
         // Compile and execute a query using the file
         $compileRequest = new CompileRequest($model)
             ->withText($prompt)
             ->withFileUri($fileUri, $format);
-            
+
         $response = $this->executeQueryAction->act(...[
             'request' => $compileRequest,
         ]);
-        
+
         // $response instanceof OneToMany\LlmSdk\Response\Query\ExecuteResponse
         printf("Model output: %s\n", $response->getOutput());
     }
