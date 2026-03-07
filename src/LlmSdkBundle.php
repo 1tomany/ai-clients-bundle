@@ -135,27 +135,6 @@ class LlmSdkBundle extends AbstractBundle
                 ->set(ClientFactory::class)
                     ->arg('$clients', tagged_iterator('onetomany.llmsdk.client'))
 
-                // Clients
-                ->set(AnthropicClient::class)
-                    ->tag('onetomany.llmsdk.client')
-                    ->arg('$httpClient', service($config['anthropic']['http_client']))
-                    ->arg('$denormalizer', service($config['anthropic']['serializer']))
-                    ->arg('$apiKey', $config['anthropic']['api_key'])
-                    ->arg('$apiVersion', $config['anthropic']['api_version'])
-                ->set(GeminiClient::class)
-                    ->tag('onetomany.llmsdk.client')
-                    ->arg('$httpClient', service($config['gemini']['http_client']))
-                    ->arg('$denormalizer', service($config['gemini']['serializer']))
-                    ->arg('$apiKey', $config['gemini']['api_key'])
-                    ->arg('$apiVersion', $config['gemini']['api_version'])
-                ->set(MockClient::class)
-                    ->tag('onetomany.llmsdk.client')
-                ->set(OpenAiClient::class)
-                    ->tag('onetomany.llmsdk.client')
-                    ->arg('$httpClient', service($config['openai']['http_client']))
-                    ->arg('$denormalizer', service($config['openai']['serializer']))
-                    ->arg('$apiKey', $config['openai']['api_key'])
-
                 // Batch Actions
                 ->set(CreateBatchAction::class)
                     ->arg('$clientFactory', service(ClientFactory::class))
@@ -179,6 +158,27 @@ class LlmSdkBundle extends AbstractBundle
                 ->set(ExecuteQueryAction::class)
                     ->arg('$clientFactory', service(ClientFactory::class))
                     ->alias(ExecuteQueryActionInterface::class, service(ExecuteQueryAction::class))
+
+                // Clients
+                ->set(AnthropicClient::class)
+                    ->tag('onetomany.llmsdk.client')
+                    ->arg('$httpClient', service($config['anthropic']['http_client']))
+                    ->arg('$denormalizer', service($config['anthropic']['serializer']))
+                    ->arg('$apiKey', $config['anthropic']['api_key'])
+                    ->arg('$apiVersion', $config['anthropic']['api_version'])
+                ->set(GeminiClient::class)
+                    ->tag('onetomany.llmsdk.client')
+                    ->arg('$httpClient', service($config['gemini']['http_client']))
+                    ->arg('$denormalizer', service($config['gemini']['serializer']))
+                    ->arg('$apiKey', $config['gemini']['api_key'])
+                    ->arg('$apiVersion', $config['gemini']['api_version'])
+                ->set(MockClient::class)
+                    ->tag('onetomany.llmsdk.client')
+                ->set(OpenAiClient::class)
+                    ->tag('onetomany.llmsdk.client')
+                    ->arg('$httpClient', service($config['openai']['http_client']))
+                    ->arg('$denormalizer', service($config['openai']['serializer']))
+                    ->arg('$apiKey', $config['openai']['api_key'])
         ;
     }
 }
