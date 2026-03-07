@@ -5,11 +5,15 @@ namespace OneToMany\LlmSdkBundle\Command;
 use OneToMany\LlmSdk\Client\Anthropic\AnthropicClient;
 use OneToMany\LlmSdk\Client\Gemini\GeminiClient;
 use OneToMany\LlmSdk\Client\OpenAi\OpenAiClient;
+use OneToMany\LlmSdk\Contract\Client\ClientInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class ListModelsCommand extends Command
 {
+    /**
+     * @var non-empty-list<class-string<ClientInterface>>
+     */
     private array $clients = [
         AnthropicClient::class,
         GeminiClient::class,
