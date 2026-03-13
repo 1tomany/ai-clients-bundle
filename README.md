@@ -85,10 +85,10 @@ final readonly class QueryFileHandler
         ]);
 
         // $response instanceof OneToMany\LlmSdk\Response\File\UploadResponse
-        $fileUri = $response->getUri();
+        $uri = $response->getUri();
 
         // Compile a query and generate output using the prompt and the cached file
-        $compileRequest = new CompileRequest($model)->withPrompt($prompt)->withFileUri($fileUri, $format);
+        $compileRequest = new CompileRequest($model)->withPrompt($prompt)->withFileUri($uri, $format);
 
         $response = $this->generateOutputAction->act(...[
             'request' => $compileRequest,
