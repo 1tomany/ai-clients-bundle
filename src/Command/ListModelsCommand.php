@@ -13,7 +13,7 @@ final class ListModelsCommand extends Command
 {
     public function __invoke(SymfonyStyle $io): int
     {
-        $findModels = function (Vendor $vendor): array {
+        $getModels = function (Vendor $vendor): array {
             $mapper = function (Model $model): string {
                 return $model->getValue();
             };
@@ -22,8 +22,8 @@ final class ListModelsCommand extends Command
         };
 
         foreach (Vendor::cases() as $vendor) {
-            $io->section($vendor->getName());
-            $io->listing($findModels($vendor));
+            $io->section($vendor->getValue());
+            $io->listing($getModels($vendor));
         }
 
         return Command::SUCCESS;
