@@ -13,9 +13,6 @@ final class ListModelsCommand extends Command
 {
     public function __invoke(SymfonyStyle $io): int
     {
-        /**
-         * @return list<non-empty-lowercase-string>
-         */
         $findModels = function (Vendor $vendor): array {
             $mapper = function (Model $model): string {
                 return $model->getValue();
